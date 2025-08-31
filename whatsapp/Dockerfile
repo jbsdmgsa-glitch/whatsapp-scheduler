@@ -44,9 +44,7 @@ COPY package*.json ./
 # Instalar dependências
 RUN npm install
 
-# Copiar código do serviço
 COPY . .
-
 # Criar diretório para dados do WhatsApp
 RUN mkdir -p .wwebjs_auth
 
