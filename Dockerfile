@@ -18,9 +18,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar código do servidor
 COPY server/ .
 
-# Copiar arquivo de configuração
-
-
 # Expor porta
 EXPOSE 5000
 
