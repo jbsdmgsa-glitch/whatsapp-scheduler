@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Backend Python (Flask)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      - ./database.db:/app/database.db
+      - ./.env:/app/.env
+    depends_on:
+      - whatsapp
+    restart: unless-stopped
+    networks:
+      - scheduler-network
+
+  # Serviço WhatsApp (Node.js)
+  whatsapp:
+    build:
+      context: ./whatsapp
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./whatsapp/.wwebjs_auth:/app/.wwebjs_auth
+      - ./whatsapp/.wwebjs_cache:/app/.wwebjs_cache
+    restart: unless-stopped
+    networks:
+      - scheduler-network
+    # Configurações de segurança para o Puppeteer
+    security_opt:
+      - seccomp:unconfined
+    shm_size: 2gb
+
+  # Servidor web para frontend (Nginx)
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - scheduler-network
+
+networks:
+  scheduler-network:
+    driver: bridge
+
+volumes:
+  whatsapp_data:
+    driver: local
+

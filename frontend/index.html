@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp & Email Scheduler</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-clock"></i>
+                        <h1>Message Scheduler</h1>
+                    </div>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span id="statusText">Conectando...</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Navigation -->
+        <nav class="nav-tabs">
+            <div class="container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        WhatsApp
+                    </button>
+                    <button class="tab-btn" data-tab="email">
+                        <i class="fas fa-envelope"></i>
+                        E-mail
+                    </button>
+                    <button class="tab-btn" data-tab="schedules">
+                        <i class="fas fa-list"></i>
+                        Agendamentos
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- WhatsApp Tab -->
+                <div class="tab-content active" id="whatsapp-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fab fa-whatsapp"></i> Agendar Mensagem WhatsApp</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="whatsappForm">
+                                <div class="form-group">
+                                    <label for="messageType">Tipo de Mensagem</label>
+                                    <select id="messageType" class="form-control">
+                                        <option value="text">Texto</option>
+                                        <option value="video">Vídeo</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="groupId">ID do Grupo/Chat</label>
+                                    <input type="text" id="groupId" class="form-control" 
+                                           placeholder="Ex: 120363123456789@g.us" required>
+                                    <small class="form-help">
+                                        <button type="button" id="loadChats" class="btn-link">
+                                            <i class="fas fa-refresh"></i> Carregar grupos disponíveis
+                                        </button>
+                                    </small>
+                                </div>
+
+                                <div id="chatsList" class="chats-list" style="display: none;">
+                                    <h4>Grupos/Chats Disponíveis:</h4>
+                                    <div id="chatsContainer"></div>
+                                </div>
+
+                                <div class="form-group" id="textGroup">
+                                    <label for="messageText">Mensagem</label>
+                                    <textarea id="messageText" class="form-control" rows="4" 
+                                              placeholder="Digite sua mensagem aqui..." required></textarea>
+                                </div>
+
+                                <div class="form-group" id="videoGroup" style="display: none;">
+                                    <label for="videoUrl">URL do Vídeo</label>
+                                    <input type="url" id="videoUrl" class="form-control" 
+                                           placeholder="https://exemplo.com/video.mp4">
+                                    
+                                    <label for="videoCaption" class="mt-3">Legenda do Vídeo</label>
+                                    <textarea id="videoCaption" class="form-control" rows="3" 
+                                              placeholder="Legenda opcional para o vídeo..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="scheduleDateTime">Data e Hora do Envio</label>
+                                    <input type="datetime-local" id="scheduleDateTime" class="form-control" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-clock"></i>
+                                    Agendar Mensagem
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Tab -->
+                <div class="tab-content" id="email-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-envelope"></i> Agendar E-mail</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="emailForm">
+                                <div class="form-group">
+                                    <label for="emailTo">Destinatário</label>
+                                    <input type="email" id="emailTo" class="form-control" 
+                                           placeholder="destinatario@exemplo.com" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="emailSubject">Assunto</label>
+                                    <input type="text" id="emailSubject" class="form-control" 
+                                           placeholder="Assunto do e-mail" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="emailText">Mensagem</label>
+                                    <textarea id="emailText" class="form-control" rows="6" 
+                                              placeholder="Digite o conteúdo do e-mail..." required></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="emailDateTime">Data e Hora do Envio</label>
+                                    <input type="datetime-local" id="emailDateTime" class="form-control" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-clock"></i>
+                                    Agendar E-mail
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedules Tab -->
+                <div class="tab-content" id="schedules-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-list"></i> Agendamentos Futuros</h2>
+                            <button id="refreshSchedules" class="btn btn-secondary">
+                                <i class="fas fa-refresh"></i>
+                                Atualizar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="schedulesContainer">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Carregando agendamentos...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- QR Code Modal -->
+        <div id="qrModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fab fa-whatsapp"></i> Autenticação WhatsApp</h3>
+                    <button class="modal-close" id="closeQrModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Escaneie o QR Code abaixo com seu WhatsApp:</p>
+                    <div id="qrCodeContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Gerando QR Code...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
