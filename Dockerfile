@@ -11,5 +11,7 @@ COPY server/ .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD [ "gunicorn", "--bind", "0.0.0.0:$PORT", "app:app" ]
+# Usar um script de entrada para garantir que $PORT seja interpretado corretamente
+COPY server/start.sh .
+ENTRYPOINT ["./start.sh"]
 
