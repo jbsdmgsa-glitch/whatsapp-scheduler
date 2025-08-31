@@ -9,18 +9,13 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar arquivos de dependências
+# Copiar arquivos de dependências e o código da aplicação
 COPY server/requirements.txt .
+COPY server/ .
 
 # Instalar dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar código do servidor
-COPY server/ .
-
-# Expor porta
-EXPOSE 5000
-
-# Comando para iniciar o servidor
-CMD ["python", "app.py"]
+# Comando para iniciar a aplicação com Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:app"]
 
